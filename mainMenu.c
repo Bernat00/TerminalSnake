@@ -67,22 +67,27 @@ appState mainMenu(terminalSize *ts) {
         case 'w':
         case 'W':
         case KEY_UP:
-            if(selectedMenuINdex > 0){
                 drawMenuOpt(selectedMenuINdex, ts, false);
-                selectedMenuINdex--;
+
+                if(selectedMenuINdex == 0)
+                    selectedMenuINdex = MENU_ITEM_COUNT - 1;
+                else selectedMenuINdex--;
+
                 drawMenuOpt(selectedMenuINdex, ts, true);
-            }
             break;
 
         
         case 's':
         case 'S':
         case KEY_DOWN:
-            if(selectedMenuINdex < MENU_ITEM_COUNT-1){
-                drawMenuOpt(selectedMenuINdex, ts, false);
-                selectedMenuINdex++;
-                drawMenuOpt(selectedMenuINdex, ts, true);
-            }
+            drawMenuOpt(selectedMenuINdex, ts, false);
+            
+            if(selectedMenuINdex == MENU_ITEM_COUNT-1)
+                selectedMenuINdex = 0;
+            else selectedMenuINdex++;
+
+            drawMenuOpt(selectedMenuINdex, ts, true);
+            
             break;
 
 
