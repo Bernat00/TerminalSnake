@@ -8,11 +8,37 @@ typedef enum
     APPSTATE_SETTINGS,
     APPSTATE_QUIT
 
-} appState;
+} AppState;
 
 
 typedef struct
 {
     int w;
     int h;
-} terminalSize;
+} TerminalSize;
+
+typedef struct
+{
+    int x;
+    int y;
+} Point;
+
+typedef struct SnakeNode
+{
+    Point value;
+    SnakeNode *next;
+    SnakeNode *prev;
+} SnakeNode;
+
+
+typedef struct
+{
+    SnakeNode *head;
+    SnakeNode *tail;
+} Snake;
+
+typedef struct 
+{
+    Snake snake;
+    Point apple;
+} GameState;

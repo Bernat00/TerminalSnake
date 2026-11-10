@@ -18,7 +18,7 @@ const char* const MENU_NAMES[] = {
     [QUIT] = "Quit"
 };
 
-void drawMenuOpt(MenuOption opt, terminalSize *ts, bool isSelected ){ //lehet const terminalsize kene
+void drawMenuOpt(MenuOption opt, TerminalSize *ts, bool isSelected ){ //lehet const terminalsize kene
     int line = ts->h/2 - MENU_ITEM_COUNT/2;
 
     econio_gotoxy(ts->w/2 - strlen(MENU_NAMES[opt])/2, line + opt);
@@ -45,8 +45,8 @@ int mapToAppState(MenuOption opt){
 
 /// @brief does the main menu
 /// @param ts the size of the terminla (at least we hope its that size)
-/// @return the selected appState
-appState mainMenu(terminalSize *ts) {
+/// @return the selected AppState
+AppState mainMenu(TerminalSize *ts) {
     int selectedMenuINdex = 0;
 
     econio_clrscr();

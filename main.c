@@ -10,7 +10,7 @@ bool TERMINAL_GETSIZE_SUPPORT = false;
 
 
 
-int get_terminal_size(terminalSize *ts)
+int get_terminal_size(TerminalSize *ts)
 {
     HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
 
@@ -41,7 +41,7 @@ int main() {
     fflush(stdout);
 
 
-    terminalSize ts;
+    TerminalSize ts;
 
     if (!get_terminal_size(&ts)){
         printf("Terminal size detection unsupported!\n");
@@ -60,7 +60,7 @@ int main() {
     econio_rawmode();
 
     
-    appState state;
+    AppState state;
     do{
         state = mainMenu(&ts);
         econio_clrscr();
