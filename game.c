@@ -12,9 +12,7 @@ typedef enum
     APPLE
 } Collidable;
 
-void drawNext(){
-    
-}
+
 
 Collidable Collide(TerminalSize *ts, GameState *gs){
     SnakeNode *s = gs->snake.head;
@@ -28,14 +26,73 @@ Collidable Collide(TerminalSize *ts, GameState *gs){
     SnakeNode *tmp = s;
     for(; tmp != NULL; tmp = tmp->next){
         if(tmp->value.x == tmp->value.x && s->value.y == tmp->value.y)
-        return SELF_OR_WALL;
+            return SELF_OR_WALL;
     }
 
     return NONE;
 }
 
 
+void handleInput(GameState *gs){
+    if(econio_kbhit()) {       
+        int key = econio_getch();
+
+        switch (key)
+        {
+        case 'w':
+        case 'W':
+        case KEY_UP:
+            gs->snakeDirection = UP;
+            break;
+
+        
+        case 's':
+        case 'S':
+        case KEY_DOWN:
+            gs->snakeDirection = DOWN;
+            break;
+
+        
+        case 'a':
+        case 'A':
+        case KEY_LEFT:
+            gs->snakeDirection = LEFT;
+            break;
+
+        
+        case 'd':
+        case 'D':
+        case KEY_RIGHT:
+            gs->snakeDirection = RIGHT;
+            break;
+        
+        }
+    }
+}
+
+thaLoop(GameState *gs){
+    /*
+        wait
+        get input
+        modify snake in gamestate
+        handle collide (apple, gameover)
+        render
+    */
+
+
+    handleInput(gs);
+    
+    //todo linked list addFhirst, addLast, FreeAll, RemoveLast
+
+}
+
+
 int runGame(TerminalSize *ts){
     GameState gs;
 
+
+    SnakeNode *tmp = s;
+    for(; tmp != NULL; tmp = tmp->next){
+        
+    }
 }

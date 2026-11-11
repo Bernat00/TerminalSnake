@@ -11,6 +11,14 @@ typedef enum
 } AppState;
 
 
+typedef enum
+{
+    UP,
+    DOWN,
+    LEFT,
+    RIGHT
+} Direction;
+
 typedef struct
 {
     int w;
@@ -40,5 +48,6 @@ typedef struct
 typedef struct 
 {
     Snake snake;
+    Direction snakeDirection;
     Point apple;
 } GameState;
