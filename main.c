@@ -37,6 +37,7 @@ void resizeTerminal(int width, int height)
 
 
 int main() {
+    econio_set_title("TerminalSnake");
     printf("\033[?25l"); //gpt azt mondta h ez hide-olja a cursort
     fflush(stdout);
 

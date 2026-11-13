@@ -3,6 +3,7 @@
 #include <string.h>
 #include "econio.h"
 #include "states.c"
+#include <time.h>
 
 
 typedef enum
@@ -70,7 +71,10 @@ void handleInput(GameState *gs){
     }
 }
 
-thaLoop(GameState *gs){
+
+
+
+void thaLoop(GameState *gs){
     /*
         wait
         get input
@@ -79,10 +83,33 @@ thaLoop(GameState *gs){
         render
     */
 
-
-    handleInput(gs);
     
-    //todo linked list addFhirst, addLast, FreeAll, RemoveLast
+
+    while(true){
+        struct timespec start, end;
+        timespec_get(&start, TIME_UTC);
+
+
+        handleInput(gs);
+        
+
+        //todo linked list addFhirst, addLast, FreeAll, RemoveLast
+
+
+        timespec_get(&end, TIME_UTC);
+
+        double elapsedMs =
+            (end.tv_sec - start.tv_sec) * 1000.0 +
+            (end.tv_nsec - start.tv_nsec) / 1000000.0;
+        
+        double toSleep = gs->settings.difficulty - elapsedMs;
+
+        if(toSleep > 0)
+            econio_sleep(toSleep);
+
+    }
+
+    
 
 }
 
