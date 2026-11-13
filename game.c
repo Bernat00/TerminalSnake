@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <time.h>
 #include <string.h>
 #include "econio.h"
 #include "states.c"
-#include <time.h>
+#include "snakeHelpers.c"
 
 
 typedef enum
@@ -15,7 +16,8 @@ typedef enum
 
 
 
-Collidable Collide(TerminalSize *ts, GameState *gs){
+Collidable collide(GameState *gs){
+    TerminalSize *ts = &(gs->settings.terminalSize); //todo ez mennyire számít mókolásnak?
     SnakeNode *s = gs->snake.head;
     
     if(s->value.x == gs->apple.x && s->value.y == gs->apple.y)
@@ -24,8 +26,8 @@ Collidable Collide(TerminalSize *ts, GameState *gs){
     if(s->value.x == 0 || s->value.y == 0 || s->value.x == ts->w-1 || s->value.y == ts->h-1)
         return SELF_OR_WALL;
 
-    SnakeNode *tmp = s;
-    for(; tmp != NULL; tmp = tmp->next){
+
+    for(SnakeNode *tmp = s; tmp != NULL; tmp = tmp->next){
         if(tmp->value.x == tmp->value.x && s->value.y == tmp->value.y)
             return SELF_OR_WALL;
     }
@@ -34,7 +36,7 @@ Collidable Collide(TerminalSize *ts, GameState *gs){
 }
 
 
-void handleInput(GameState *gs){
+void handleInput(GameState *gs){ //ezt egy kissé tulgondoltam
     if(econio_kbhit()) {       
         int key = econio_getch();
 
@@ -71,6 +73,33 @@ void handleInput(GameState *gs){
     }
 }
 
+Point calcNextHeadPos(GameState *gs){
+    Point next;
+
+    switch (gs->snakeDirection)
+    {
+    case UP:
+        next.y = gs-> snake.head->value.y + 1;
+        break;
+    
+
+    case DOWN:
+        next.y = gs-> snake.head->value.y - 1;
+        break;
+    
+
+    case LEFT:
+        next.x = gs-> snake.head->value.x - 1;
+        break;
+    
+
+    case RIGHT:
+        next.x = gs-> snake.head->value.x + 1;
+        break;
+    }
+
+    return next;
+}
 
 
 
@@ -91,7 +120,17 @@ void thaLoop(GameState *gs){
 
 
         handleInput(gs);
-        
+
+        Point next = calcNextHeadPos(gs);
+        snakeAddFhirst(&(gs->snake), next);
+
+        switch (collide(gs))
+        {
+        case APPLE:
+            //todo kirajzolni
+            break;
+
+        } 
 
         //todo linked list addFhirst, addLast, FreeAll, RemoveLast
 

@@ -8,43 +8,59 @@
 
 
 void snakeInit(Snake *s){
-    SnakeNode *f;
-    SnakeNode *l;
-    f->prev = NULL;
-    f->next = l;
-
-    l->prev = f;
-    l->next = NULL;
-
-    s->head = f;
-    s->tail = l;
+    s->head = NULL;
+    s->tail = NULL;
 }
 
 
 bool snakeAddFhirst(Snake *s, Point value){ //todo megkerdezni h erdemes e az ilyewneket pointerrel?
-    SnakeNode *node = (SnakeNode*)malloc(sizeof(SnakeNode));
-    if(node == NULL)
+    if(s == NULL){
         return false;
+    }
 
-    node->value = value;
-    node->prev = 
+    SnakeNode *node = (SnakeNode*)malloc(sizeof(SnakeNode));
+    if(node == NULL){
+        return false;
+    }
+
+    if(s->head == NULL){
+        s->head = node;
+        s->tail = node;
+        return true;
+    }
+
     node->next = s->head;
-    
     s->head = node;
-    s->tail->prev = node;
-
     return true;
 }
 
 bool snakeDeleteLast(Snake *s){
-    if(s->tail == NULL || s->tail->prev == NULL)
+    if(s->tail == NULL)
         return false;
 
-    s->tail->prev = s->tail->prev->prev;
+    
+    SnakeNode *utsoElotti = s->tail->prev;
+    free(s->tail);
+
+    s->tail = utsoElotti;
+
+    return true;
 }
 
 bool snakeFree(Snake *s){
-    for(SnakeNode *n = s->head.)
+    if(s == NULL || s->head == NULL || s->tail == NULL){
+        return false;
+    }
+
+    SnakeNode *n = s->head;
+    while(n != NULL){
+        SnakeNode *tmp = n;
+        n = n->next;
+
+        free(tmp);
+    }
+
+    return true;
 }
 
 
