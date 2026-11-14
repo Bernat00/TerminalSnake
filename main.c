@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include "econio.h"
 #include "mainMenu.c"
+#include "game.c"
 
 
 #include <windows.h>
@@ -35,6 +36,19 @@ void resizeTerminal(int width, int height)
     fflush(stdout);
 }
 
+Settings loadSettings(){
+    TerminalSize ts;
+    ts.w = 120;
+    ts.h = 40;
+
+    Settings tmp;
+    tmp.autoResize = false;
+    tmp.difficulty = EASY;
+    tmp.terminalSize = ts; //ilyenkor melyiket érdemes hasznalni pointer vagy nem pointer
+
+    return tmp;
+}
+
 
 int main() {
     econio_set_title("TerminalSnake");
@@ -42,12 +56,13 @@ int main() {
     fflush(stdout);
 
 
-    TerminalSize ts;
+    Settings settings = loadSettings();
 
-    if (!get_terminal_size(&ts)){
+
+    if (!get_terminal_size(&(settings.terminalSize))){
         printf("Terminal size detection unsupported!\n");
-        ts.w = 120;
-        ts.h = 40;
+        settings.terminalSize.w = 120;
+        settings.terminalSize.h = 4;
     }
     else TERMINAL_GETSIZE_SUPPORT = true;
 
@@ -63,19 +78,13 @@ int main() {
     
     AppState state;
     do{
-        state = mainMenu(&ts);
+        state = mainMenu(&settings);
         econio_clrscr();
 
         switch (state)
         {
         case APPSTATE_GAME:
-            while (true)
-            {
-                if (econio_kbhit())
-                    break;
-                printf("GAME state\n");
-                econio_sleep(0.01);
-            }
+            runGame(&settings);
             break;
             
 

@@ -2,7 +2,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include "econio.h"
-#include "states.c"
+#include "states.h"
 
 typedef enum {
     PLAY,
@@ -11,7 +11,7 @@ typedef enum {
 } MenuOption;
 
 
-const MENU_ITEM_COUNT = 3;
+const int MENU_ITEM_COUNT = 3;
 const char* const MENU_NAMES[] = {
     [PLAY] = "Play",
     [SETTINGS] = "Settings",
@@ -21,7 +21,7 @@ const char* const MENU_NAMES[] = {
 void drawMenuOpt(MenuOption opt, TerminalSize *ts, bool isSelected ){ //lehet const terminalsize kene
     int line = ts->h/2 - MENU_ITEM_COUNT/2;
 
-    econio_gotoxy(ts->w/2 - strlen(MENU_NAMES[opt])/2, line + opt);
+    econio_gotoxy(ts->w/2 - (int)strlen(MENU_NAMES[opt])/2, line + opt);
 
     if(isSelected) econio_textbackground(COL_BLUE);
 
@@ -46,7 +46,9 @@ int mapToAppState(MenuOption opt){
 /// @brief does the main menu
 /// @param ts the size of the terminla (at least we hope its that size)
 /// @return the selected AppState
-AppState mainMenu(TerminalSize *ts) {
+AppState mainMenu(Settings *settings) {
+    TerminalSize *ts = &(settings->terminalSize);
+
     int selectedMenuINdex = 0;
 
     econio_clrscr();

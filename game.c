@@ -3,7 +3,7 @@
 #include <time.h>
 #include <string.h>
 #include "econio.h"
-#include "states.c"
+#include "states.h"
 #include "snakeHelpers.c"
 
 
@@ -13,6 +13,9 @@ typedef enum
     SELF_OR_WALL,
     APPLE
 } Collidable;
+
+const char _snakebody = 219;
+const char *snakeBodyP = &_snakebody;
 
 
 
@@ -27,8 +30,8 @@ Collidable collide(GameState *gs){
         return SELF_OR_WALL;
 
 
-    for(SnakeNode *tmp = s; tmp != NULL; tmp = tmp->next){
-        if(tmp->value.x == tmp->value.x && s->value.y == tmp->value.y)
+    for(SnakeNode *tmp = s->next; tmp != NULL; tmp = tmp->next){
+        if(s->value.x == tmp->value.x && s->value.y == tmp->value.y)
             return SELF_OR_WALL;
     }
 
@@ -40,61 +43,69 @@ void handleInput(GameState *gs){ //ezt egy kissé tulgondoltam
     if(econio_kbhit()) {       
         int key = econio_getch();
 
+
+        Direction dir = gs->snakeDirection;
+
         switch (key)
         {
         case 'w':
         case 'W':
         case KEY_UP:
-            gs->snakeDirection = UP;
+            dir = UP;
             break;
 
         
         case 's':
         case 'S':
         case KEY_DOWN:
-            gs->snakeDirection = DOWN;
+            dir = DOWN;
             break;
 
         
         case 'a':
         case 'A':
         case KEY_LEFT:
-            gs->snakeDirection = LEFT;
+            dir = LEFT;
             break;
 
         
         case 'd':
         case 'D':
         case KEY_RIGHT:
-            gs->snakeDirection = RIGHT;
+            dir = RIGHT;
             break;
         
         }
+
+        if (dir % 2 != gs->snakeDirection % 2)
+            gs->snakeDirection = dir;
     }
 }
 
 Point calcNextHeadPos(GameState *gs){
     Point next;
+    next.x = gs->snake.head->value.x;
+    next.y = gs->snake.head->value.y;
 
     switch (gs->snakeDirection)
     {
     case UP:
-        next.y = gs-> snake.head->value.y + 1;
+        next.y--;
         break;
     
 
     case DOWN:
-        next.y = gs-> snake.head->value.y - 1;
+        next.y++;
         break;
     
 
     case LEFT:
-        next.x = gs-> snake.head->value.x - 1;
+        next.x--;
         break;
     
 
     case RIGHT:
-        next.x = gs-> snake.head->value.x + 1;
+        next.x++;
         break;
     }
 
@@ -103,7 +114,7 @@ Point calcNextHeadPos(GameState *gs){
 
 
 
-void thaLoop(GameState *gs){
+int thaLoop(GameState *gs){
     /*
         wait
         get input
@@ -127,21 +138,34 @@ void thaLoop(GameState *gs){
         switch (collide(gs))
         {
         case APPLE:
-            //todo kirajzolni
+            econio_gotoxy(next.x, next.y);
+            printf(snakeBodyP);
             break;
 
-        } 
 
-        //todo linked list addFhirst, addLast, FreeAll, RemoveLast
+        case NONE:
+            econio_gotoxy(next.x, next.y);
+            printf(snakeBodyP);
+
+            econio_gotoxy(gs->snake.tail->value.x, gs->snake.tail->value.y);
+            printf(" ");
+            
+            snakeDeleteLast(&(gs->snake));
+            break;
+        
+        
+        case SELF_OR_WALL:
+            return snakeGetLen(&(gs->snake));
+        } 
 
 
         timespec_get(&end, TIME_UTC);
 
-        double elapsedMs =
-            (end.tv_sec - start.tv_sec) * 1000.0 +
-            (end.tv_nsec - start.tv_nsec) / 1000000.0;
+        double elapsedS =
+            (end.tv_sec - start.tv_sec) +
+            (end.tv_nsec - start.tv_nsec) / 1000000000.0;
         
-        double toSleep = gs->settings.difficulty - elapsedMs;
+        double toSleep = gs->settings.difficulty / 1000.0 - elapsedS;
 
         if(toSleep > 0)
             econio_sleep(toSleep);
@@ -153,12 +177,45 @@ void thaLoop(GameState *gs){
 }
 
 
-int runGame(TerminalSize *ts){
+int runGame(Settings *s){
+    econio_clrscr();
+
     GameState gs;
+    Snake snake;
+    snakeInit(&snake);
+
+    gs.settings = *s;
+    gs.snake = snake;
+    gs.snakeDirection = RIGHT;
+    
 
 
-    SnakeNode *tmp = s;
-    for(; tmp != NULL; tmp = tmp->next){
-        
+    for (int i = 2; i >= 0; i--)
+    {
+        Point tmp;
+        tmp.y = gs.settings.terminalSize.h/2;
+        tmp.x = gs.settings.terminalSize.w/2 - i;
+        snakeAddFhirst(&(gs.snake), tmp);
     }
+
+    for(SnakeNode *n = gs.snake.head; n != NULL; n = n->next){
+        econio_gotoxy(n->value.x, n->value.y);
+        printf(snakeBodyP);
+    }
+    
+    Point apple;
+    apple.x = rand() % s->terminalSize.w;
+    apple.y = rand() % s->terminalSize.h;
+
+    if (apple.y == s->terminalSize.h/2){
+        apple.y++;
+    }
+
+    gs.apple = apple;
+
+    int tmp = thaLoop(&gs);
+    snakeFree(&gs.snake);
+
+    return tmp;
+
 }

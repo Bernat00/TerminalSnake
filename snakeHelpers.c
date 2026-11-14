@@ -3,7 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "econio.h"
-#include "states.c"
+#include "states.h"
 #include "debugmalloc.h"
 
 
@@ -18,32 +18,40 @@ bool snakeAddFhirst(Snake *s, Point value){ //todo megkerdezni h erdemes e az il
         return false;
     }
 
-    SnakeNode *node = (SnakeNode*)malloc(sizeof(SnakeNode));
+    SnakeNode *node = (SnakeNode*)malloc(sizeof(SnakeNode)); 
     if(node == NULL){
         return false;
     }
+    node->value = value;
+    node->prev = NULL;
 
     if(s->head == NULL){
         s->head = node;
         s->tail = node;
+        node->next = NULL;
         return true;
     }
 
     node->next = s->head;
+    s->head->prev = node;
     s->head = node;
     return true;
 }
 
-bool snakeDeleteLast(Snake *s){
-    if(s->tail == NULL)
+bool snakeDeleteLast(Snake *s) {
+    if (s == NULL || s->tail == NULL)
         return false;
 
-    
-    SnakeNode *utsoElotti = s->tail->prev;
-    free(s->tail);
+    SnakeNode *oldTail = s->tail;
+    s->tail = oldTail->prev;
 
-    s->tail = utsoElotti;
+    if (s->tail == NULL) {
+        s->head = NULL;
+    } else {
+        s->tail->next = NULL;
+    }
 
+    free(oldTail);
     return true;
 }
 
@@ -62,5 +70,22 @@ bool snakeFree(Snake *s){
 
     return true;
 }
+
+int snakeGetLen(Snake *s){
+    if(s == NULL || s->head == NULL || s->tail == NULL){
+        return -1;
+    }
+
+    int c = 0;
+    
+    for(SnakeNode *n = s->head; n != NULL; n = n->next){
+        c++;
+    }
+
+    return c;
+}
+
+
+
 
 

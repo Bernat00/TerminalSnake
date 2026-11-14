@@ -146,7 +146,7 @@ int econio_getch() {
 
 
 void econio_sleep(double sec) {
-    Sleep(sec * 1000);
+    Sleep((DWORD)(sec * 1000));//todo erre (nem explicit conv volt) warningot dobott........
 }
 
 

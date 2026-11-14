@@ -1,4 +1,5 @@
-
+#ifndef STATES_H
+#define STATES_H
 
 
 typedef enum
@@ -13,10 +14,10 @@ typedef enum
 
 typedef enum
 {
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT
+    UP = 1,
+    DOWN = 3,
+    LEFT = 2,
+    RIGHT = 4
 } Direction;
 
 typedef struct
@@ -34,8 +35,8 @@ typedef struct
 typedef struct SnakeNode
 {
     Point value;
-    SnakeNode *next;
-    SnakeNode *prev;
+    struct SnakeNode *next;
+    struct SnakeNode *prev;
 } SnakeNode;
 
 
@@ -64,10 +65,12 @@ typedef struct
 
 typedef struct 
 {
-    Snake snake;
+    Snake snake; //ennek is pointernek kellett volna lennie
     Direction snakeDirection;
     Point apple;
     Settings settings;
 } GameState;
+
+#endif
 
 
